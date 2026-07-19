@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movie List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .movie-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .movie-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+      .genre-btn.active {
+        background: linear-gradient(135deg, #7c3aed, #a855f7);
+        color: white;
+        border-color: transparent;
+      }
+      .sort-btn.active {
+        background: linear-gradient(135deg, #dc2626, #ef4444);
+        color: white;
+      }
+      .search-input:focus {
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.3);
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .fade-in {
+        animation: fadeIn 0.4s ease-out forwards;
+      }
+      .star-filled {
+        color: #fbbf24;
+      }
+      .star-empty {
+        color: #4b5563;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-950 text-gray-100 min-h-screen">
+    <header
+      class="bg-gray-900/80 backdrop-blur-md border-b border-gray-800 sticky top-0 z-50"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-10 h-10 bg-gradient-to-br from-violet-600 to-purple-500 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/20"
+            >
+              <svg
+                class="w-5 h-5 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"
+                />
+              </svg>
+            </div>
+            <h1
+              class="text-2xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent"
+            >
+              MovieList
+            </h1>
+          </div>
+          <div class="text-sm text-gray-400" id="movie-count">Loading...</div>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="space-y-6 mb-10">
+        <div
+          class="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center"
+        >
+          <div class="relative flex-1 max-w-xl">
+            <svg
+              class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+            <input
+              type="text"
+              id="search-input"
+              placeholder="Search movies by title..."
+              class="search-input w-full pl-12 pr-4 py-3.5 bg-gray-900 border border-gray-700 rounded-xl text-gray-100 placeholder-gray-500 focus:outline-none focus:border-violet-500 transition-all"
+            />
+          </div>
+
+          <button
+            id="sort-btn"
+            class="sort-btn flex items-center gap-2 px-6 py-3.5 bg-gray-900 border border-gray-700 rounded-xl text-gray-300 hover:bg-gray-800 transition-all font-medium"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
+              />
+            </svg>
+            Top Rated
+          </button>
+        </div>
+
+        <div class="flex flex-wrap gap-2" id="genre-filters">
+          <button
+            data-genre="All"
+            class="genre-btn active px-5 py-2 rounded-full border border-gray-700 bg-gray-900 text-gray-300 text-sm font-medium hover:bg-gray-800 transition-all"
+          >
+            All
+          </button>
+          <button
+            data-genre="Action"
+            class="genre-btn px-5 py-2 rounded-full border border-gray-700 bg-gray-900 text-gray-300 text-sm font-medium hover:bg-gray-800 transition-all"
+          >
+            Action
+          </button>
+          <button
+            data-genre="Drama"
+            class="genre-btn px-5 py-2 rounded-full border border-gray-700 bg-gray-900 text-gray-300 text-sm font-medium hover:bg-gray-800 transition-all"
+          >
+            Drama
+          </button>
+          <button
+            data-genre="Romance"
+            class="genre-btn px-5 py-2 rounded-full border border-gray-700 bg-gray-900 text-gray-300 text-sm font-medium hover:bg-gray-800 transition-all"
+          >
+            Romance
+          </button>
+          <button
+            data-genre="Thriller"
+            class="genre-btn px-5 py-2 rounded-full border border-gray-700 bg-gray-900 text-gray-300 text-sm font-medium hover:bg-gray-800 transition-all"
+          >
+            Thriller
+          </button>
+          <button
+            data-genre="Horror"
+            class="genre-btn px-5 py-2 rounded-full border border-gray-700 bg-gray-900 text-gray-300 text-sm font-medium hover:bg-gray-800 transition-all"
+          >
+            Horror
+          </button>
+          <button
+            data-genre="Sci-Fi"
+            class="genre-btn px-5 py-2 rounded-full border border-gray-700 bg-gray-900 text-gray-300 text-sm font-medium hover:bg-gray-800 transition-all"
+          >
+            Sci-Fi
+          </button>
+        </div>
+      </div>
+
+      <div
+        id="movie-grid"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+      ></div>
+
+      <div id="empty-state" class="hidden text-center py-20">
+        <div
+          class="w-20 h-20 mx-auto mb-4 bg-gray-800 rounded-full flex items-center justify-center"
+        >
+          <svg
+            class="w-10 h-10 text-gray-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"
+            />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-300 mb-2">
+          No movies found
+        </h3>
+        <p class="text-gray-500">Try adjusting your search or filters.</p>
+      </div>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
